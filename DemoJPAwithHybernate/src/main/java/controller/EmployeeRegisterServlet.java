@@ -66,12 +66,16 @@ public class EmployeeRegisterServlet extends HttpServlet {
 
         // Tạo danh sách EmployeeSkill từ các kỹ năng được chọn
         List<EmployeeSkill> employeeSkills = new ArrayList<>();
+        
+        SkillDBContext skillDB = new SkillDBContext();
+        
+        
         if (selectedSkills != null) {
             for (String skillId : selectedSkills) {
                 int skid = Integer.parseInt(skillId);
                 Skill skill = new Skill();
                 skill.setSkid(skid);
-
+                        //skills.stream().filter(s -> s.getSkid() == skid).findFirst().get();
                 EmployeeSkill employeeSkill = new EmployeeSkill();
                 EmployeeSkillId id = new EmployeeSkillId();
                 id.setSkid(skid);
@@ -79,14 +83,14 @@ public class EmployeeRegisterServlet extends HttpServlet {
                 employeeSkill.setEmployee(employee);
                 employeeSkill.setSkill(skill);
                 employeeSkill.setStartDate(new Date());
-                employeeSkill.setEndDate(null);
+                employeeSkill.setEndDate(new Date());
                 employeeSkills.add(employeeSkill);
             }
         }
         employee.setEmployeeSkills(employeeSkills);
 
         // Lưu employee và các kỹ năng liên quan
-        employeeDBContext.insert(employee);
+        employeeDBContext.insertWithSkills(employee);
 
         response.sendRedirect("list");
     }

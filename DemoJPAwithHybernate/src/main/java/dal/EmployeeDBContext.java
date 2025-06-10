@@ -9,6 +9,8 @@ import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import model.Employee;
+import model.EmployeeSkill;
+import model.Skill;
 
 public class EmployeeDBContext extends DBContext {
 
@@ -16,6 +18,23 @@ public class EmployeeDBContext extends DBContext {
         try (EntityManager entityManager = getEntityManager()) {
             entityManager.getTransaction().begin();
             entityManager.persist(employee);
+            entityManager.getTransaction().commit();
+        }
+    }
+    
+    public void insertWithSkills(Employee employee) {
+        try (EntityManager entityManager = getEntityManager()) {
+            entityManager.getTransaction().begin();
+            //update managed entity
+            for (EmployeeSkill employeeSkill : employee.getEmployeeSkills()) {
+                Skill unmanaged =  employeeSkill.getSkill();
+                Skill managed = entityManager.find(Skill.class, unmanaged.getSkid());
+                employeeSkill.setSkill(managed);
+            }
+            entityManager.persist(employee);
+            for (EmployeeSkill employeeSkill : employee.getEmployeeSkills()) {
+                employeeSkill.getId().setEid(employee.getEid());
+            }
             entityManager.getTransaction().commit();
         }
     }

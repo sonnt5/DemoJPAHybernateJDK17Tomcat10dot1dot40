@@ -28,7 +28,7 @@ public class Employee {
     @JoinColumn(name = "did")
     private Department department;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.PERSIST)
     private List<EmployeeSkill> employeeSkills;
 
     // Getters and setters
